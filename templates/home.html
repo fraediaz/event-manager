@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ project_name }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#0f172a',
+            paper: '#f8fafc',
+            dusk: '#111827',
+            aura: '#22d3ee',
+            ember: '#fb7185',
+            gold: '#f59e0b'
+          },
+          boxShadow: {
+            glow: '0 30px 80px rgba(34, 211, 238, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(34, 211, 238, 0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(251, 113, 133, 0.16), transparent 24%),
+        linear-gradient(180deg, #020617 0%, #0f172a 48%, #111827 100%);
+    }
+    #eventMap {
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      height: 28rem;
+    }
+    .leaflet-control-attribution { display: none; }
+    .leaflet-container { font-family: inherit; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 antialiased">
+  <main class="mx-auto flex min-h-screen w-full max-w-7xl items-center px-6 py-10 sm:px-8 lg:px-12">
+    <section class="grid w-full gap-8 lg:grid-cols-[1.3fr_0.9fr] lg:gap-10">
+      <div class="space-y-8">
+        <div class="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 shadow-glow backdrop-blur">
+          <span class="h-2.5 w-2.5 rounded-full bg-aura"></span>
+          API ready · Swagger · ReDoc · JWT
+        </div>
+
+        <div class="space-y-5">
+          <h1 class="max-w-3xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
+            {{ project_name }}
+          </h1>
+          <p class="max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
+            {{ tagline }}
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <a href="/api/docs/" class="rounded-full bg-aura px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.02] hover:bg-cyan-300">
+            Abrir Swagger
+          </a>
+          <a href="/api/redoc/" class="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:scale-[1.02] hover:bg-white/10">
+            Ver ReDoc
+          </a>
+          <a href="/api/schema/" class="rounded-full border border-white/15 bg-transparent px-5 py-3 text-sm font-semibold text-slate-200 transition hover:scale-[1.02] hover:bg-white/5">
+            OpenAPI schema
+          </a>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-3">
+          {% for section in sections %}
+          <article class="rounded-3xl border border-white/10 bg-white/6 p-5 shadow-glow backdrop-blur">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-200">{{ section.title }}</h2>
+            <ul class="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+              {% for item in section.items %}
+              <li class="flex gap-3">
+                <span class="mt-2 h-1.5 w-1.5 flex-none rounded-full bg-gold"></span>
+                <span>{{ item }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+          </article>
+          {% endfor %}
+        </div>
+
+        <div class="mt-12">
+          <h2 class="mb-4 text-2xl font-semibold text-white">Eventos en el mapa</h2>
+          <div id="eventMap" class="shadow-glow"></div>
+        </div>
+      </div>
+
+      <aside class="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 shadow-glow backdrop-blur-xl sm:p-8">
+        <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"></div>
+        <div class="flex items-center justify-between text-xs uppercase tracking-[0.28em] text-slate-400">
+          <span>README preview</span>
+          <span>v1.0</span>
+        </div>
+
+        <div class="mt-6 rounded-2xl border border-white/10 bg-black/25 p-5">
+          <p class="text-sm text-cyan-200">Project overview</p>
+          <h2 class="mt-2 text-2xl font-semibold text-white">Event Manager API</h2>
+          <p class="mt-3 text-sm leading-6 text-slate-300">
+            Gestiona eventos, asistentes y autenticación con una experiencia de documentación clara y lista para consumir desde frontend, mobile o herramientas internas.
+          </p>
+
+          <div class="mt-6 space-y-3 text-sm text-slate-200">
+            <div class="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/5 px-4 py-3">
+              <span class="mt-1 h-2 w-2 rounded-full bg-emerald-400"></span>
+              <div>
+                <p class="font-medium text-white">JWT listo</p>
+                <p class="text-slate-400">Tokens access/refresh para clientes externos.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/5 px-4 py-3">
+              <span class="mt-1 h-2 w-2 rounded-full bg-amber-400"></span>
+              <div>
+                <p class="font-medium text-white">Swagger UI</p>
+                <p class="text-slate-400">Explora la API con ejemplos y esquema OpenAPI.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/5 px-4 py-3">
+              <span class="mt-1 h-2 w-2 rounded-full bg-rose-400"></span>
+              <div>
+                <p class="font-medium text-white">ReDoc</p>
+                <p class="text-slate-400">Documentación más legible para leer de arriba abajo.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-2 gap-3 text-xs text-slate-300 sm:text-sm">
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+            <p class="text-slate-500">Auth</p>
+            <p class="mt-1 font-semibold text-white">JWT + Session</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+            <p class="text-slate-500">Format</p>
+            <p class="mt-1 font-semibold text-white">OpenAPI 3</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+            <p class="text-slate-500">API</p>
+            <p class="mt-1 font-semibold text-white">REST</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+            <p class="text-slate-500">UI</p>
+            <p class="mt-1 font-semibold text-white">Tailwind CDN</p>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-3">
+          <a href="{% url 'user_login' %}" class="block w-full rounded-full bg-aura px-5 py-3 text-center text-sm font-semibold text-slate-950 transition hover:scale-[1.02] hover:bg-cyan-300">
+            Iniciar Sesión
+          </a>
+          <a href="{% url 'user_signup' %}" class="block w-full rounded-full border border-white/15 bg-white/5 px-5 py-3 text-center text-sm font-semibold text-white transition hover:scale-[1.02] hover:bg-white/10">
+            Crear Cuenta
+          </a>
+        </div>
+      </aside>
+    </section>
+  </main>
+  <script>
+    const map = L.map('eventMap').setView([-33.4489, -70.6693], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    fetch('/api/events/public/')
+      .then(res => res.json())
+      .then(events => {
+        events.forEach(event => {
+          if (event.latitude && event.longitude) {
+            const marker = L.marker([parseFloat(event.latitude), parseFloat(event.longitude)]).addTo(map);
+            const popupContent = `
+              <div class="text-sm">
+                <p class="font-semibold text-slate-900">${event.title}</p>
+                <p class="text-slate-600">${event.location}</p>
+                <a href="/event/${event.id}/" class="text-cyan-600 hover:underline">Ver detalle</a>
+              </div>
+            `;
+            marker.bindPopup(popupContent);
+          }
+        });
+      })
+      .catch(err => console.error('Error al cargar eventos:', err));
+  </script>
+</body>
+</html>

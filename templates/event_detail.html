@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ event.title }} - Event Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            aura: '#22d3ee',
+            ember: '#fb7185',
+            gold: '#f59e0b'
+          },
+          boxShadow: {
+            glow: '0 30px 80px rgba(34, 211, 238, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background:
+        linear-gradient(180deg, #020617 0%, #0f172a 48%, #111827 100%);
+    }
+    #eventDetailMap {
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      height: 32rem;
+    }
+    .leaflet-control-attribution { display: none; }
+    .leaflet-container { font-family: inherit; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 antialiased">
+  <main class="mx-auto w-full max-w-5xl px-6 py-12 sm:px-8 lg:px-12">
+    <a href="/" class="mb-6 inline-flex items-center gap-2 text-slate-400 transition hover:text-cyan-300">
+      <span>←</span>
+      <span>Volver</span>
+    </a>
+
+    <article class="space-y-8">
+      <header class="space-y-4">
+        <h1 class="text-5xl font-semibold tracking-tight text-white lg:text-6xl">{{ event.title }}</h1>
+        <p class="text-lg text-slate-300">{{ event.location }}</p>
+        <div class="flex flex-wrap gap-4">
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+            <p class="text-sm text-slate-400">Fecha</p>
+            <p class="mt-1 font-semibold text-white">{{ event.date|date:"d/m/Y H:i" }}</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+            <p class="text-sm text-slate-400">Organizador</p>
+            <p class="mt-1 font-semibold text-white">{{ event.creator.username }}</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+            <p class="text-sm text-slate-400">Asistentes</p>
+            <p class="mt-1 font-semibold text-white">{{ event.attendees.count }}</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="prose prose-invert prose-sm max-w-none">
+        <h2 class="text-2xl font-semibold text-white">Descripción</h2>
+        <p class="text-slate-300">{{ event.description }}</p>
+      </section>
+
+      <section class="rounded-3xl border border-white/10 bg-white/6 p-6 shadow-glow backdrop-blur">
+        <h2 class="text-xl font-semibold text-white">Tu asistencia</h2>
+        {% if user.is_authenticated %}
+        <p class="mt-2 text-sm text-slate-300">
+          Estado actual:
+          <span class="font-semibold text-cyan-300">
+            {% if user_attendance %}{{ user_attendance.get_status_display }}{% else %}Sin respuesta{% endif %}
+          </span>
+        </p>
+        <form method="post" action="{% url 'rsvp_event' event.id %}" class="mt-4 flex flex-wrap gap-2">
+          {% csrf_token %}
+          <button type="submit" name="status" value="going" class="rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-emerald-300">
+            Voy
+          </button>
+          <button type="submit" name="status" value="maybe" class="rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-amber-200">
+            Quizás
+          </button>
+          <button type="submit" name="status" value="not_going" class="rounded-full bg-rose-400 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-rose-300">
+            No voy
+          </button>
+        </form>
+        {% else %}
+        <p class="mt-2 text-sm text-slate-300">Inicia sesión para confirmar tu asistencia.</p>
+        <a href="{% url 'user_login' %}" class="mt-4 inline-flex rounded-full bg-aura px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300">
+          Iniciar sesión
+        </a>
+        {% endif %}
+
+        <div class="mt-5 grid gap-2 sm:grid-cols-3">
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+            <p class="text-slate-400">Voy</p>
+            <p class="mt-1 text-lg font-semibold text-emerald-300">{{ attendance_summary.going }}</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+            <p class="text-slate-400">Quizás</p>
+            <p class="mt-1 text-lg font-semibold text-amber-200">{{ attendance_summary.maybe }}</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+            <p class="text-slate-400">No voy</p>
+            <p class="mt-1 text-lg font-semibold text-rose-300">{{ attendance_summary.not_going }}</p>
+          </div>
+        </div>
+      </section>
+
+      {% if event.latitude and event.longitude %}
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold text-white">Ubicación en el mapa</h2>
+        <div id="eventDetailMap" class="shadow-glow"></div>
+      </section>
+      {% endif %}
+
+      <section class="rounded-3xl border border-white/10 bg-white/6 p-6 shadow-glow backdrop-blur">
+        <h2 class="text-lg font-semibold text-white">Interactúa con este evento</h2>
+        <p class="mt-2 text-sm text-slate-300">
+          Usa la API en <code class="rounded bg-slate-950 px-2 py-1 text-cyan-300">/api/events/{{ event.id }}/</code> para obtener
+          datos completos del evento o registrar tu asistencia.
+        </p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <a href="/api/docs/" class="rounded-full bg-aura px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300">
+            Ver en Swagger
+          </a>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  {% if event.latitude and event.longitude %}
+  <script>
+    const lat = {{ latitude }};
+    const lng = {{ longitude }};
+    const map = L.map('eventDetailMap').setView([lat, lng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+      .bindPopup('<strong>{{ event.title }}</strong><br>{{ event.location }}')
+      .openPopup();
+  </script>
+  {% endif %}
+</body>
+</html>

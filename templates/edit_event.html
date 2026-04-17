@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Evento - Event Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body {
+            @apply bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950;
+        }
+        #eventMap {
+            height: 300px;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="text-slate-100">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-slate-950/80 border-b border-slate-800 backdrop-blur-md">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <a href="{% url 'home' %}" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-rose-400">
+                Event Manager
+            </a>
+            <a href="/event/{{ event.id }}/" class="text-slate-400 hover:text-slate-300 transition-colors">
+                ← Volver al Evento
+            </a>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2">Editar Evento</h1>
+            <p class="text-slate-400">{{ event.title }}</p>
+        </div>
+
+        <!-- Error Message -->
+        {% if error %}
+        <div class="mb-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded text-rose-400 text-sm">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Form -->
+        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-8 backdrop-blur-sm">
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-sm font-medium text-slate-200 mb-2">
+                        Título del Evento *
+                    </label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        required
+                        value="{{ event.title }}"
+                        class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+                    >
+                </div>
+
+                <!-- Location -->
+                <div>
+                    <label for="location" class="block text-sm font-medium text-slate-200 mb-2">
+                        Ubicación *
+                    </label>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        required
+                        value="{{ event.location }}"
+                        class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+                    >
+                </div>
+
+                <!-- Date -->
+                <div>
+                    <label for="date" class="block text-sm font-medium text-slate-200 mb-2">
+                        Fecha y Hora *
+                    </label>
+                    <input
+                        type="datetime-local"
+                        id="date"
+                        name="date"
+                        required
+                        value="{{ event.date|date:'Y-m-dTH:i' }}"
+                        class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+                    >
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="description" class="block text-sm font-medium text-slate-200 mb-2">
+                        Descripción *
+                    </label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        required
+                        rows="5"
+                        class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+                    >{{ event.description }}</textarea>
+                </div>
+
+                <!-- Map for Coordinates -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-200 mb-2">
+                        Ubicación en el Mapa (opcional)
+                    </label>
+                    <p class="text-xs text-slate-400 mb-3">Haz click en el mapa para actualizar las coordenadas</p>
+                    <div id="eventMap" class="mb-4"></div>
+                </div>
+
+                <!-- Coordinates (Hidden) -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="latitude" class="block text-sm font-medium text-slate-200 mb-2">
+                            Latitud
+                        </label>
+                        <input
+                            type="number"
+                            id="latitude"
+                            name="latitude"
+                            step="0.0001"
+                            value="{{ event.latitude|default:'' }}"
+                            class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+                        >
+                    </div>
+                    <div>
+                        <label for="longitude" class="block text-sm font-medium text-slate-200 mb-2">
+                            Longitud
+                        </label>
+                        <input
+                            type="number"
+                            id="longitude"
+                            name="longitude"
+                            step="0.0001"
+                            value="{{ event.longitude|default:'' }}"
+                            class="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+                        >
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex gap-4 pt-4">
+                    <button
+                        type="submit"
+                        class="flex-1 py-3 font-semibold text-white rounded-lg transition-all duration-300 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 transform hover:scale-105 active:scale-95"
+                    >
+                        Guardar Cambios
+                    </button>
+                    <a href="/event/{{ event.id }}/" class="flex-1 py-3 font-semibold text-center text-slate-200 rounded-lg border border-slate-600 hover:border-slate-500 transition-colors">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize map
+        const lat = {{ event.latitude|default:'-33.4489' }};
+        const lng = {{ event.longitude|default:'-70.6693' }};
+        const map = L.map('eventMap').setView([lat, lng], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19,
+        }).addTo(map);
+
+        let marker = L.marker([lat, lng]).addTo(map);
+
+        // Set coordinates when clicking on map
+        map.on('click', function(e) {
+            const newLat = e.latlng.lat;
+            const newLng = e.latlng.lng;
+
+            document.getElementById('latitude').value = newLat.toFixed(4);
+            document.getElementById('longitude').value = newLng.toFixed(4);
+
+            // Remove existing marker
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            // Add new marker
+            marker = L.marker([newLat, newLng]).addTo(map)
+                .bindPopup(`<div class="text-sm text-slate-900"><p>Lat: ${newLat.toFixed(4)}</p><p>Lng: ${newLng.toFixed(4)}</p></div>`)
+                .openPopup();
+        });
+    </script>
+</body>
+</html>
