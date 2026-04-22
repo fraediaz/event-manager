@@ -25,6 +25,7 @@ Aplicación full-stack para crear, descubrir y gestionar eventos geolocalizados,
 ![Portada](screenshots/1.png)
 ![Dashboard](screenshots/2.png)
 ![Detalle de evento](screenshots/3.png)
+![OpenAPI](screenshots/4.png)
 
 ## 🛠️ Stack técnico
 
