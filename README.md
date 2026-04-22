@@ -1,8 +1,10 @@
 # Event Manager
 
-Aplicación web + API para gestión de eventos, con autenticación JWT y experiencia visual con mapas.
+Aplicación full-stack para crear, descubrir y gestionar eventos geolocalizados en Chile, con autenticación segura y visualización en mapas interactivos.
 
-## Demo funcional
+## 🚀 Demo en producción
+
+👉 https://event-manager-619s.onrender.com
 
 - Portada pública con mapa: `/`
 - Dashboard autenticado: `/` (cuando inicias sesión)
@@ -11,20 +13,40 @@ Aplicación web + API para gestión de eventos, con autenticación JWT y experie
 - Swagger UI: `/api/docs/`
 - ReDoc: `/api/redoc/`
 
+## ✨ ¿Qué lo hace interesante?
+
+- Eventos geolocalizados visualizados en mapa interactivo.
+- Autenticación dual: sesión + JWT para API.
+- Arquitectura híbrida: server-rendered + API REST.
+- Permisos por rol con control de acceso real.
+
 ## Capturas
 
 ![Portada](screenshots/1.png)
 ![Dashboard](screenshots/2.png)
 ![Detalle de evento](screenshots/3.png)
 
-## Stack técnico
+## 🛠️ Stack técnico
 
-- Backend: Django + Django REST Framework
-- Auth: Session Auth + JWT (`djangorestframework-simplejwt`)
-- Documentación: OpenAPI 3 con `drf-spectacular`
-- Frontend: Django Templates + Tailwind CDN + Leaflet + OpenStreetMap
-- Base de datos: SQLite (dev)
-- CI: GitHub Actions
+**Backend**
+- Django
+- Django REST Framework
+
+**Frontend**
+- Django Templates
+- Tailwind (CDN)
+- Leaflet + OpenStreetMap
+
+**Infraestructura**
+- Render (deploy)
+- GitHub Actions (CI)
+
+**Auth**
+- Session Auth
+- JWT (`djangorestframework-simplejwt`)
+
+**Base de datos**
+- SQLite (desarrollo)
 
 ## Funcionalidades clave
 
@@ -104,4 +126,5 @@ python manage.py test
 	- `check`
 	- `migrate`
 	- `test`
+
 
