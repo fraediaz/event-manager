@@ -1,6 +1,6 @@
 # Event Manager
 
-Aplicación full-stack para crear, descubrir y gestionar eventos geolocalizados en Chile, con autenticación segura y visualización en mapas interactivos.
+Aplicación full-stack para crear, descubrir y gestionar eventos geolocalizados, con autenticación segura y visualización en mapas interactivos.
 
 ## 🚀 Demo en producción
 
