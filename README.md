@@ -11,6 +11,12 @@ Aplicación web + API para gestión de eventos, con autenticación JWT y experie
 - Swagger UI: `/api/docs/`
 - ReDoc: `/api/redoc/`
 
+## Capturas
+
+![Portada](screenshots/1.png)
+![Dashboard](screenshots/2.png)
+![Detalle de evento](screenshots/3.png)
+
 ## Stack técnico
 
 - Backend: Django + Django REST Framework

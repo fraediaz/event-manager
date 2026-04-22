@@ -18,6 +18,10 @@ class Command(BaseCommand):
             {'username': 'juan', 'password': 'juan123456', 'email': 'juan@example.com', 'is_staff': False},
             {'username': 'maria', 'password': 'maria123456', 'email': 'maria@example.com', 'is_staff': False},
             {'username': 'carlos', 'password': 'carlos123456', 'email': 'carlos@example.com', 'is_staff': False},
+            {'username': 'ana', 'password': 'ana123456', 'email': 'ana@example.com', 'is_staff': False},
+            {'username': 'pedro', 'password': 'pedro123456', 'email': 'pedro@example.com', 'is_staff': False},
+            {'username': 'sofia', 'password': 'sofia123456', 'email': 'sofia@example.com', 'is_staff': False},
+            {'username': 'diego', 'password': 'diego123456', 'email': 'diego@example.com', 'is_staff': False},
         ]
 
         users = {}
@@ -85,6 +89,78 @@ class Command(BaseCommand):
                 'date': timezone.now() + timezone.timedelta(days=25),
                 'creator': users['maria'],
             },
+            {
+                'title': 'Data Engineering Night Antofagasta',
+                'description': 'Charlas de pipelines, ETL y observabilidad de datos en tiempo real.',
+                'location': 'Antofagasta, Chile',
+                'latitude': Decimal('-23.6509'),
+                'longitude': Decimal('-70.3975'),
+                'date': timezone.now() + timezone.timedelta(days=12),
+                'creator': users['ana'],
+            },
+            {
+                'title': 'IA Product Meetup Viña del Mar',
+                'description': 'Casos reales de productos con IA y estrategias de lanzamiento.',
+                'location': 'Viña del Mar, Chile',
+                'latitude': Decimal('-33.0245'),
+                'longitude': Decimal('-71.5518'),
+                'date': timezone.now() + timezone.timedelta(days=18),
+                'creator': users['pedro'],
+            },
+            {
+                'title': 'Cloud Security Day Temuco',
+                'description': 'Buenas prácticas de seguridad cloud, IAM y hardening.',
+                'location': 'Temuco, Chile',
+                'latitude': Decimal('-38.7359'),
+                'longitude': Decimal('-72.5904'),
+                'date': timezone.now() + timezone.timedelta(days=22),
+                'creator': users['sofia'],
+            },
+            {
+                'title': 'Mobile Dev Jam Iquique',
+                'description': 'Sesiones prácticas de desarrollo móvil multiplataforma.',
+                'location': 'Iquique, Chile',
+                'latitude': Decimal('-20.2307'),
+                'longitude': Decimal('-70.1357'),
+                'date': timezone.now() + timezone.timedelta(days=28),
+                'creator': users['diego'],
+            },
+            {
+                'title': 'API Design Workshop Rancagua',
+                'description': 'Diseño de APIs REST robustas, versionado y documentación OpenAPI.',
+                'location': 'Rancagua, Chile',
+                'latitude': Decimal('-34.1708'),
+                'longitude': Decimal('-70.7444'),
+                'date': timezone.now() + timezone.timedelta(days=16),
+                'creator': users['ana'],
+            },
+            {
+                'title': 'DevOps Hands-on Talca',
+                'description': 'CI/CD, contenedores y despliegues automatizados paso a paso.',
+                'location': 'Talca, Chile',
+                'latitude': Decimal('-35.4264'),
+                'longitude': Decimal('-71.6554'),
+                'date': timezone.now() + timezone.timedelta(days=14),
+                'creator': users['pedro'],
+            },
+            {
+                'title': 'UX Research Lab Arica',
+                'description': 'Métodos de investigación de usuarios y pruebas de usabilidad.',
+                'location': 'Arica, Chile',
+                'latitude': Decimal('-18.4783'),
+                'longitude': Decimal('-70.3126'),
+                'date': timezone.now() + timezone.timedelta(days=24),
+                'creator': users['sofia'],
+            },
+            {
+                'title': 'Backend Architecture Summit Chillan',
+                'description': 'Arquitecturas limpias, escalabilidad y patrones backend.',
+                'location': 'Chillán, Chile',
+                'latitude': Decimal('-36.6066'),
+                'longitude': Decimal('-72.1034'),
+                'date': timezone.now() + timezone.timedelta(days=32),
+                'creator': users['diego'],
+            },
         ]
 
         for event_data in events_data:
@@ -130,3 +206,7 @@ class Command(BaseCommand):
         self.stdout.write('  User: juan / juan123456')
         self.stdout.write('  User: maria / maria123456')
         self.stdout.write('  User: carlos / carlos123456')
+        self.stdout.write('  User: ana / ana123456')
+        self.stdout.write('  User: pedro / pedro123456')
+        self.stdout.write('  User: sofia / sofia123456')
+        self.stdout.write('  User: diego / diego123456')
